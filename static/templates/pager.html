@@ -1,0 +1,21 @@
+<!-- pager -->
+<ul class="pager">
+	{% if more == False %}
+		{% if prev_go == 'newer' or not prev_go %}
+			<li class="previous"><a
+				href="/?prev_go={{prev_go}}&go=older&limit={{limit}}&more={{more}}&numEls={{numEls}}&cursor={{cursor}}">&larr;
+				Older</a></li>
+		{% else %}
+			<li class="next"><a
+				href="/?prev_go={{prev_go}}&go=newer&limit={{limit}}&more={{more}}&numEls={{numEls}}&cursor={{cursor}}">Newer
+				&rarr;</a></li>
+		{% endif %}
+	{% else %}
+		<li class="previous"><a
+			href="/?prev_go={{prev_go}}&go=older&limit={{limit}}&more={{more}}&numEls={{numEls}}&cursor={{cursor}}">&larr;
+			Older</a></li>
+		<li class="next"><a
+			href="/?prev_go={{prev_go}}&go=newer&limit={{limit}}&more={{more}}&numEls={{numEls}}&cursor={{cursor}}">Newer
+			&rarr;</a></li>
+	{% endif %}
+</ul>

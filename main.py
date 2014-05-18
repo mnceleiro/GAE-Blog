@@ -7,64 +7,98 @@ import jinja2
 from admin import AdminHandler
 from entities import Post
 
-from google.appengine.ext import ndb
 from google.appengine.api import users
+from google.appengine.datastore.datastore_query import Cursor
 
 JINJA_ENVIRONMENT = jinja2.Environment(
 		loader=jinja2.FileSystemLoader( os.path.dirname( __file__ ) ),
 		extensions=[ "jinja2.ext.autoescape" ],
 		autoescape=True )
 
+
+def getPosts(cursor, limit):
+	if (limit):
+		posts, next_cursor, more = Post.query().order( -Post.date ).fetch_page(limit, start_cursor=cursor)
+		print posts
+	else:
+		posts, next_cursor, more = Post.query().order( -Post.date ).fetch()
+
+	return posts, next_cursor, more
+
+
+def doOlderPagination(request, cursor, limit):
+	if (request.get('prev_go') == 'newer'):
+		cursor = cursor.reversed()
+	
+	query = Post.query().order( -Post.date )
+	posts, next_cursor, more = query.fetch_page(int(request.get('numEls')), start_cursor=cursor)
+
+	if (request.get('prev_go') == 'newer'):
+		posts, next_cursor, more = query.fetch_page(limit, start_cursor=next_cursor)
+	
+	return posts, next_cursor, more
+		
+		
+def doNewerPagination(request, cursor, limit):
+	if (request.get('prev_go') == 'older'):
+		cursor = cursor.reversed()
+			
+	query = Post.query().order( Post.date )
+	posts, next_cursor, more = query.fetch_page(int(request.get('numEls')), start_cursor=cursor)
+
+	if (request.get('prev_go') == 'older'):
+		posts, next_cursor, more = query.fetch_page(limit, start_cursor=next_cursor)
+
+	return posts[::-1], next_cursor, more
+
+def doPagination(limit, request):
+	cursor = Cursor(urlsafe=request.get('cursor', default_value=None))
+	
+	go = request.get('go')
+	
+	if (not go):
+		posts, next_cursor, more = getPosts(cursor, limit)
+		more = False
+		
+		if not next_cursor:
+			return [], "", None
+	elif (go == 'older'):
+		posts, next_cursor, more = doOlderPagination(request, cursor, limit)
+	else:
+		posts, next_cursor, more = doNewerPagination(request, cursor, limit)
+	
+	next_cursor = next_cursor.urlsafe()
+	
+	return posts, next_cursor, more
+
+
 class MainHandler(webapp2.RequestHandler):
 	def __init__(self, request=None, response=None):
 		self.initialize(request, response)
 
-	def get(self):
-		user = users.get_current_user()
-		limit = 5
-		
-		''' Paginación '''
-		prev_go = self.request.get('prev_go')
-		cursor = ndb.Cursor(urlsafe=self.request.get('cursor',default_value=None))
-		
-		if (self.request.get('go') == 'newer'):
-			query = Post.query().order( Post.date )	# Los posts van por fecha de viejos a recientes [4,3,2,1]
-			
-			if prev_go == 'older':
-				_, next_cursor, _ = query.fetch_page(limit, start_cursor=cursor.reversed())
-				query, next_cursor, more = query.fetch_page(limit, start_cursor=next_cursor)
-			else:
-				query, next_cursor, more = query.fetch_page(limit, start_cursor=cursor.reversed())
-				
-			query = reversed(query)
-			
-			next_cursor = next_cursor.reversed()
-			
-		else:
-			query = Post.query().order( -Post.date )	# Los posts van por fecha de recientes a viejos [1,2,3,4]
 
-			if prev_go == 'newer':
-				_, next_cursor, _ = query.fetch_page(limit, start_cursor=cursor)
-				query, next_cursor, more = query.fetch_page(limit, start_cursor=next_cursor)
-			else:
-				query, next_cursor, more = query.fetch_page(limit, start_cursor=cursor)
-			
-		if next_cursor:	
-			next_cursor = next_cursor.urlsafe()
-			
-		values = {
-			'posts': query,
-			'cursor': str(next_cursor),
-			'prev_go': self.request.get('go'),
-			'user': user,
-			'users': users
-	    }
+	def get(self):
+		if self.request.get('limit'):
+			limit = int(self.request.get('limit'))
+		else:
+			limit = 3 # default limit
+
+		posts, next_cursor, more = doPagination(limit, self.request)
 		
-		if self.request.get('msg'):
-			values['msg'] = self.request.get('msg')
-			
-		template = JINJA_ENVIRONMENT.get_template( "static/templates/index.html" )
-		self.response.write( template.render( values ) );
+		values = {
+			'users': users,
+			'user': users.get_current_user(),
+			'posts': posts,
+			'cursor': next_cursor,
+			'more': more,	# Comprobar en la plantilla si hay mas elementos para mostrar el boton de paginado corresponndiente
+			'prev_go': self.request.get('go'),
+			'limit': limit,
+			'numEls': len(posts),
+			'msg': self.request.get('msg')
+		}
+		
+		template = JINJA_ENVIRONMENT.get_template('/static/templates/index.html')
+		self.response.write( template.render(values) )
 		
 	
 	def login(self):
@@ -84,7 +118,6 @@ class MainHandler(webapp2.RequestHandler):
 		id = self.request.get("id")
 		
 		post = Post.get_by_id(int(id))
-# 		print post
 		
 		user = users.get_current_user()
 		

@@ -45,15 +45,6 @@
 	
 		<hr>
 	{% endfor %}
-
-	<!-- pager -->
-	<ul class="pager">
-		<li class="previous"><a
-			href="/?cursor={{cursor}}&prev_go={{prev_go}}&go=older">&larr;
-				Older</a></li>
-		<li class="next"><a
-			href="/?cursor={{cursor}}&prev_go={{prev_go}}&go=newer">Newer
-				&rarr;</a></li>
-	</ul>
-
+	
+	{% include '/static/templates/pager.html' %}
 </div>
