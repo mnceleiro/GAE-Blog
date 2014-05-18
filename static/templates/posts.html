@@ -1,0 +1,59 @@
+<div class="col-lg-8">
+	{% if msg %}
+		<div class="well">
+			<h4>{{msg}}</h4>
+		</div>
+	{% endif %}
+	
+	{% if users.is_current_user_admin() %}
+		<div class="pull-right">
+			<p>
+				<form action="/addform">
+					<button type="submit" class="btn btn-primary">Add new Post</button>
+				</form>
+			</p>
+		</div>
+	{% endif %}
+	
+	<!-- blog entry -->
+	{% for post in posts %}
+		<h1>
+			<a href="/blogpost?id={{post.key.id()}}">{{post.name}}</a>
+	
+		</h1>
+		<p class="lead">
+			by <a href="/">{{post.author.capitalize().split("@")[0]}}</a>
+		</p>
+		<hr>
+		<span class="glyphicon glyphicon-time"></span> Posted on
+		{{post.date.strftime("%A %d. %B %Y")}}
+		
+
+		<hr>
+		<!-- 				<img src="http://placehold.it/900x300" class="img-responsive">
+							<hr> -->
+		{% if users.is_current_user_admin() %}
+			<div id="editable" contenteditable="true">
+				<p>{{post.description}}</p>
+			</div>
+		{% else %}
+			<p>{{post.description}}</p>
+		{% endif %}
+		<a class="btn btn-primary"
+			href="/blogpost?id={{post.key.id()}}">Read More
+			<span class="glyphicon glyphicon-chevron-right"></span></a>
+	
+		<hr>
+	{% endfor %}
+
+	<!-- pager -->
+	<ul class="pager">
+		<li class="previous"><a
+			href="/?cursor={{cursor}}&prev_go={{prev_go}}&go=older">&larr;
+				Older</a></li>
+		<li class="next"><a
+			href="/?cursor={{cursor}}&prev_go={{prev_go}}&go=newer">Newer
+				&rarr;</a></li>
+	</ul>
+
+</div>

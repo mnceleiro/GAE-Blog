@@ -1,0 +1,35 @@
+application: mnceleiroblog
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+
+- url: /favicon\.ico
+  static_files: static/favicon.ico
+  upload: favicon\.ico
+
+- url: /static/css
+  static_dir: static/css
+
+- url: /static/js
+  static_dir: static/js
+  
+- url: /static/img
+  static_dir: static/img
+
+- url: /static/fonts
+  static_dir: static/fonts
+  
+- url: /static/ckeditor
+  static_dir: /static/ckeditor
+
+- url: .*
+  script: main.app
+  
+libraries:
+- name: webapp2
+  version: "2.5.2"
+- name: jinja2
+  version: "2.6"

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<!-- Bootstrap core CSS -->
+<link href="static/css/bootstrap.css" rel="stylesheet">
+
+<!-- Add custom CSS here -->
+<link href="static/css/blog-home.css" rel="stylesheet">
+</head>
+<body>
+
+	{% include '/static/templates/header.html' %}
+
+	<div class="container">
+		<div class="row">
+
+			<form class="form-horizontal" method="post" action="/admin">
+				<fieldset>
+					<legend>Añadir post</legend>
+					<div class="control-group">
+						<label class="control-label" for="name">Text input</label>
+						<div class="controls">
+							<input type="text" class="input-xlarge" id="name" name="name">
+						</div>
+					</div>
+
+
+					<!-- 					<div class="control-group">
+						<label class="control-label" for="fileInput">File input</label>
+						<div class="controls">
+							<input class="input-file" id="fileInput" type="file">
+						</div>
+					</div> -->
+					<div class="control-group">
+						<label class="control-label" for="description">Textarea</label>
+						<div class="controls">
+							<textarea class="input-xlarge" id="description"
+								name="description" rows="3"></textarea>
+						</div>
+					</div>
+					<div class="form-actions">
+						<button type="submit" class="btn btn-primary">Save
+							changes</button>
+						<button class="btn">Cancel</button>
+					</div>
+				</fieldset>
+			</form>
+
+			<!-- JavaScript -->
+			<script src="static/js/jquery-1.10.2.js"></script>
+			<script src="static/js/bootstrap.js"></script>
+			<!-- 			<script type="text/javascript" src="/static/js/innerHtml.js"></script> -->
+
+		</div>
+	</div>
+</body>
