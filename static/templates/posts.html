@@ -33,11 +33,11 @@
 		<!-- 				<img src="http://placehold.it/900x300" class="img-responsive">
 							<hr> -->
 		{% if users.is_current_user_admin() %}
-			<div id="editable" contenteditable="true">
-				<p>{{post.description}}</p>
+			<div id="editable" contenteditable="false">
+				<p>{{post.description|safe}}</p>
 			</div>
 		{% else %}
-			<p>{{post.description}}</p>
+			<p>{{post.description|safe}}</p>
 		{% endif %}
 		<a class="btn btn-primary"
 			href="/blogpost?id={{post.key.id()}}">Read More

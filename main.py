@@ -71,7 +71,6 @@ def doPagination(limit, request):
 	
 	return posts, next_cursor, more
 
-
 class MainHandler(webapp2.RequestHandler):
 	def __init__(self, request=None, response=None):
 		self.initialize(request, response)

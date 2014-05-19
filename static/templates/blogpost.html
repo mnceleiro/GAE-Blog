@@ -8,7 +8,10 @@
     <meta name="author" content="">
 
     <title>Blog Post Template for Bootstrap 3</title>
-
+    
+    <!--  CKEDITOR (cargandolo abajo no funciona o_O -->
+    <script src="static/ckeditor/ckeditor.js"></script>
+    
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.css" rel="stylesheet">
 
@@ -45,15 +48,17 @@
                 <hr>
 <!--                 <img src="http://placehold.it/900x300" class="img-responsive">
                 <hr> -->
-               		{% if users.is_current_user_admin() %}
-						<div id="editable" contenteditable="true">
-							<p class="lead" id="textSave">{{post.description}}</p>
-						</div>
-						<a class="btn btn-primary" id="btnSave"
-							href="/update?id={{post.key.id()}}&description=">Save changes</a>
-					{% else %}
-						<p class="lead">{{post.description}}</p>
-					{% endif %}
+                
+           		{% if users.is_current_user_admin() %}
+					<div id="editable" contenteditable="true">
+						<p class="lead">{{post.description|safe}}</p>
+					</div>
+					<a class="btn btn-primary" id="btnSave"
+						href="/update?id={{post.key.id()}}&description=">Save changes</a>
+				{% else %}
+					<p class="lead">{{post.description}}</p>
+				{% endif %}
+					
  <!--                <ul>
                     <li><a href="http://spaceipsum.com/">Space Ipsum</a>
                     </li>
@@ -98,6 +103,7 @@
     <script src="/static/js/jquery-1.10.2.js"></script>
     <script src="/static/js/bootstrap.js"></script>
     <script src="/static/js/innerHtml.js"></script>
+
 
 </body>
 

@@ -47,12 +47,11 @@ class AdminHandler(webapp2.RequestHandler):
         
     def post(self):
         self.name = self.request.get('name')
-        self.description = self.request.get('description')
         self.author = str(users.get_current_user())
         
 #         print self.request.headers
         if (users.is_current_user_admin()):
-            post = Post(name = self.name, description = self.description, author = self.author)
+            post = Post(name = self.name, description = (self.request.get('description')), author = self.author)
             post.put()
             return self.redirect('/?msg=El post se ha realizado correctamente')
         else:
@@ -69,6 +68,9 @@ class AdminHandler(webapp2.RequestHandler):
     def update(self):
         toUpdate = self.request.get('id')
         
+        print "toUpdate: " + str(toUpdate)
+        print "description: " + str(self.request.get('description'))
+        
         post = Post.get_by_id(int(toUpdate))
         post.description = self.request.get('description')
         post.put()
@@ -78,8 +80,3 @@ class AdminHandler(webapp2.RequestHandler):
     def logout(self):
         self.redirect(users.create_logout_url('/'))
             
-                
-                
-    
-        
-        

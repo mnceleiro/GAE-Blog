@@ -23,7 +23,7 @@ handlers:
   static_dir: static/fonts
   
 - url: /static/ckeditor
-  static_dir: /static/ckeditor
+  static_dir: static/ckeditor
 
 - url: .*
   script: main.app

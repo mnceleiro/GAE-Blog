@@ -7,6 +7,9 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
+<!--  CKEDITOR (cargandolo abajo no funciona o_O -->
+<script src="static/ckeditor/ckeditor.js"></script>
+
 <!-- Bootstrap core CSS -->
 <link href="static/css/bootstrap.css" rel="stylesheet">
 
@@ -24,12 +27,12 @@
 				<fieldset>
 					<legend>Añadir post</legend>
 					<div class="control-group">
-						<label class="control-label" for="name">Text input</label>
+						<label class="control-label" for="name">Título</label>
 						<div class="controls">
 							<input type="text" class="input-xlarge" id="name" name="name">
 						</div>
 					</div>
-
+					<hr>
 
 					<!-- 					<div class="control-group">
 						<label class="control-label" for="fileInput">File input</label>
@@ -38,16 +41,22 @@
 						</div>
 					</div> -->
 					<div class="control-group">
-						<label class="control-label" for="description">Textarea</label>
+						<label class="control-label" for="description">Descripción</label>
 						<div class="controls">
-							<textarea class="input-xlarge" id="description"
-								name="description" rows="3"></textarea>
+        					<textarea name="description" id="description">&lt;p&gt;Initial value.&lt;/p&gt;</textarea>
+					            <script>
+					                CKEDITOR.replace( 'description', {
+					                    toolbar: 'Basic',
+					                    uiColor: '#9AB8F3'
+					                });
+					            </script>
 						</div>
 					</div>
+					<hr>
 					<div class="form-actions">
 						<button type="submit" class="btn btn-primary">Save
 							changes</button>
-						<button class="btn">Cancel</button>
+<!-- 						<button class="btn">Cancel</button> -->
 					</div>
 				</fieldset>
 			</form>
@@ -55,7 +64,6 @@
 			<!-- JavaScript -->
 			<script src="static/js/jquery-1.10.2.js"></script>
 			<script src="static/js/bootstrap.js"></script>
-			<!-- 			<script type="text/javascript" src="/static/js/innerHtml.js"></script> -->
 
 		</div>
 	</div>

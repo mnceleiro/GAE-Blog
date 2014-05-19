@@ -9,9 +9,9 @@
 
 $('#btnSave').on('click', function(url) {
 	var href = $(this).attr('href')
-	var textSave = $('p#textSave').text()
+	var textSave = $('#editable p').text()
 	
-	alert(href+textSave)
+//	alert(href+textSave)
 	
 	$(this).attr('href',href+textSave)
 })
