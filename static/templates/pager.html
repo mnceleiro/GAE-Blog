@@ -1,21 +1,25 @@
 <!-- pager -->
 <ul class="pager">
 	{% if more == False %}
-		{% if prev_go == 'newer' or not prev_go %}
+		{% if prev_go == 'newer' %}
 			<li class="previous"><a
 				href="/?prev_go={{prev_go}}&go=older&limit={{limit}}&more={{more}}&numEls={{numEls}}&cursor={{cursor}}">&larr;
-				Older</a></li>
-		{% else %}
+				Más antiguo</a></li>
+		{% elif prev_go == 'older' %}
 			<li class="next"><a
-				href="/?prev_go={{prev_go}}&go=newer&limit={{limit}}&more={{more}}&numEls={{numEls}}&cursor={{cursor}}">Newer
+				href="/?prev_go={{prev_go}}&go=newer&limit={{limit}}&more={{more}}&numEls={{numEls}}&cursor={{cursor}}">Más actual
 				&rarr;</a></li>
 		{% endif %}
+	{% elif not prev_go and not go %}
+		<li class="previous"><a
+			href="/?prev_go={{prev_go}}&go=older&limit={{limit}}&more={{more}}&numEls={{numEls}}&cursor={{cursor}}">&larr;
+			Más antiguo</a></li>
 	{% else %}
 		<li class="previous"><a
 			href="/?prev_go={{prev_go}}&go=older&limit={{limit}}&more={{more}}&numEls={{numEls}}&cursor={{cursor}}">&larr;
-			Older</a></li>
+			Más antiguo</a></li>
 		<li class="next"><a
-			href="/?prev_go={{prev_go}}&go=newer&limit={{limit}}&more={{more}}&numEls={{numEls}}&cursor={{cursor}}">Newer
+			href="/?prev_go={{prev_go}}&go=newer&limit={{limit}}&more={{more}}&numEls={{numEls}}&cursor={{cursor}}">Más actual
 			&rarr;</a></li>
 	{% endif %}
 </ul>

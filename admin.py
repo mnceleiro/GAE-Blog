@@ -23,23 +23,19 @@ class AdminHandler(webapp2.RequestHandler):
         
     def get(self):
         user = users.get_current_user()
-
+        
         if user:
             self.redirect('/?msg=Se ha identificado correctamente.')
         else:
             self.redirect(users.create_login_url(self.request.uri))
         
-    def header(self):
-        pass
         
-        
-    def addform(self):
+    def add(self):
         user = users.get_current_user()
-        
         
         values = {
                 'user': user,
-                'users': users,
+                'users': users, #
         }
         
         template = JINJA_ENVIRONMENT.get_template("/static/templates/addform.html")
@@ -49,9 +45,8 @@ class AdminHandler(webapp2.RequestHandler):
         self.name = self.request.get('name')
         self.author = str(users.get_current_user())
         
-#         print self.request.headers
         if (users.is_current_user_admin()):
-            post = Post(name = self.name, description = (self.request.get('description')), author = self.author)
+            post = Post(name = self.name, description = self.request.get('description').encode('utf-8'), author = self.author)
             post.put()
             return self.redirect('/?msg=El post se ha realizado correctamente')
         else:
@@ -61,21 +56,25 @@ class AdminHandler(webapp2.RequestHandler):
     def delete(self):
         toDelete = self.request.get('id')
         
-        ndb.Key(Post, int(toDelete)).delete()
+        if (users.is_current_user_admin() and toDelete):
+            ndb.Key(Post, int(toDelete)).delete()
+            self.redirect('/?msg=El post ha sido borrado correctamente')
+        else:
+            self.redirect('/?msg="El post no se ha guardado.')
         
-        self.redirect('/?msg=El post ha sido borrado correctamente')
         
     def update(self):
         toUpdate = self.request.get('id')
-        
-        print "toUpdate: " + str(toUpdate)
-        print "description: " + str(self.request.get('description'))
-        
         post = Post.get_by_id(int(toUpdate))
-        post.description = self.request.get('description')
-        post.put()
         
-        self.redirect("/?msg=El post ha sido editado correctamente.")
+        post.description = self.request.get('description')
+        post.last_edit_author = str(users.get_current_user())
+        
+        if post.description and post.last_edit_author and toUpdate:
+            post.put()
+            self.redirect("/?msg=El post ha sido editado correctamente.")
+        else:
+            self.redirect('/?msg=El post no ha podido actualizarse.')
     
     def logout(self):
         self.redirect(users.create_logout_url('/'))
