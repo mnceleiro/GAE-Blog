@@ -7,11 +7,9 @@
 	
 	{% if users.is_current_user_admin() %}
 		<div class="pull-right">
-			<p>
-				<form action="/addform">
-					<button type="submit" class="btn btn-primary">Add new Post</button>
-				</form>
-			</p>
+			<form action="/addform">
+				<button type="submit" class="btn btn-primary button-space" style="margin-left:20px">Añadir nuevo Post</button>
+			</form>
 		</div>
 	{% endif %}
 	
@@ -22,11 +20,14 @@
 	
 		</h1>
 		<p class="lead">
-			by <a href="/">{{post.author.capitalize().split("@")[0]}}</a>
+			by <!-- <a href="/"> -->{{post.author.capitalize().split("@")[0]}}</a>
 		</p>
 		<hr>
-		<span class="glyphicon glyphicon-time"></span> Posted on
-		{{post.date.strftime("%A %d. %B %Y")}}
+		<span class="glyphicon glyphicon-time"></span>
+		Posted on {{post.date.strftime("%A %d. %B %Y")}}
+    	{% if post.last_edit_author %}
+    		and last edited by {{post.last_edit_author.capitalize().split("@")[0]}} 
+   		{% endif %} 
 		
 
 		<hr>
@@ -39,8 +40,8 @@
 		{% else %}
 			<p>{{post.description|safe}}</p>
 		{% endif %}
-		<a class="btn btn-primary"
-			href="/blogpost?id={{post.key.id()}}">Read More
+		<a class="btn btn-primary button-space"
+			href="/blogpost?id={{post.key.id()}}">Comentarios
 			<span class="glyphicon glyphicon-chevron-right"></span></a>
 	
 		<hr>

@@ -14,9 +14,10 @@
     
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.css" rel="stylesheet">
-
-    <!-- Add custom CSS here -->
     <link href="static/css/blog-post.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link href="static/css/style.css" rel="stylesheet">
 
 </head>
 
@@ -31,62 +32,92 @@
             
                 <!-- the actual blog post: title/author/date/content -->
                 <h1>{{post.name}}</h1>
-                <p class="lead">by <a href="index.php">{{post.author}}</a>
+                <p class="lead">by <a href="index.php">{{post.author.capitalize().split("@")[0]}}</a></p>
                 
-               	{% if user %}
+               	{% if users.is_current_user_admin() %}
 					<div class="pull-right">
 						<p>
 						<a class="btn btn-primary"
-							href="/delete?id={{post.key.id()}}">Delete Post</a>
+							href="/delete?id={{post.key.id()}}">Eliminar Post</a>
 						</p>
 					</div>
 				{% endif %}
                 </p>
                 <hr>
                 <p>
-                    <span class="glyphicon glyphicon-time"></span> Posted on {{post.date.strftime("%A %d. %B %Y")}}</p>
+                    <span class="glyphicon glyphicon-time"></span>
+                    Posted on {{post.date.strftime("%A %d. %B %Y")}}
+                	{% if post.last_edit_author %}
+                		and after edited by {{post.last_edit_author.capitalize().split("@")[0]}} 
+               		{% endif %}   
+                </p>
                 <hr>
 <!--                 <img src="http://placehold.it/900x300" class="img-responsive">
                 <hr> -->
-                
+
+
            		{% if users.is_current_user_admin() %}
-					<div id="editable" contenteditable="true">
-						<p class="lead">{{post.description|safe}}</p>
-					</div>
-					<a class="btn btn-primary" id="btnSave"
-						href="/update?id={{post.key.id()}}&description=">Save changes</a>
+	           		<form id="updatepost" action="/update">
+	    				<div class="control-group">
+							<div class="controls">
+	        					<textarea name="description" id="description">
+	        						{{post.description|safe}}
+        						</textarea>
+					            <script>
+					                CKEDITOR.replace( 'description', {
+					                    toolbar: 'Basic',
+					                    uiColor: '#9AB8F3'
+					                });
+					            </script>
+							</div>
+						</div>
+						<div class="form-actions button-space">
+							<input type="hidden" name="id" value={{post.key.id()}} />
+							<button class="btn btn-primary" id="btnSave">Guardar cambios</button>
+						</div>
+					</form>
 				{% else %}
-					<p class="lead">{{post.description}}</p>
+					<p class="lead">{{post.description|safe}}</p>
 				{% endif %}
-					
- <!--                <ul>
-                    <li><a href="http://spaceipsum.com/">Space Ipsum</a>
-                    </li>
-                    <li><a href="http://cupcakeipsum.com/">Cupcake Ipsum</a>
-                    </li>
-                    <li><a href="http://tunaipsum.com/">Tuna Ipsum</a>
-                    </li>
-                </ul> -->
-
                 <hr>
-
-                <!-- the comment box -->
-                <div class="well">
-                    <h4>Leave a Comment:</h4>
-                    <form role="form">
-                        <div class="form-group">
-                            <textarea class="form-control" rows="3"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
-                </div>
-
+                
+                {% if user %}
+	                <!-- the comment box -->
+	                <div class="well">
+	                    <h4>Escribe un comentario:</h4>
+	                    <form role="form" id="comment" method="post">
+	                        <div class="form-group">
+	                            <textarea id="taComment" class="form-control" rows="3" required></textarea>
+	                        </div>
+	                        <button type="submit" class="btn btn-primary">Submit</button>
+	                    </form>
+	                </div>
+	            {% else %}
+	            	<div class="well">
+	            		<h4><a href="/admin">Identificate</a> con tu cuenta de google para comentar.</h4>
+	            	</div>
+	            {% endif %}
                 <hr>
+             	<h4>Comentarios</h4>
+             	<hr>
+
+				{% for c in comments %}
+					<div id="comments">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								{{c.date.strftime("%A %d. %B %Y %H:%M:%S")}} - 
+								<strong>{{c.author.capitalize().split("@")[0]}}</strong> 
+								ha escrito:
+							</div>
+							<div class="panel-body">
+								{{c.comment}}
+							</div>
+						</div>
+					</div>	
+				{% endfor %}
             </div>
 			{% include '/static/templates/sidebar.html' %}
         </div>
-
-        <hr>
 
         <footer>
             <div class="row">
@@ -102,8 +133,12 @@
     <!-- JavaScript -->
     <script src="/static/js/jquery-1.10.2.js"></script>
     <script src="/static/js/bootstrap.js"></script>
-    <script src="/static/js/innerHtml.js"></script>
-
+    
+    {% block jquery %}
+    	 <script type="text/javascript">
+    		{% include "/static/innerHtml.js" %}
+    	</script>
+   	{% endblock %}
 
 </body>
 
